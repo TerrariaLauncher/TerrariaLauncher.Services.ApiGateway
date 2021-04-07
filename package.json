@@ -1,0 +1,30 @@
+{
+  "name": "terraria-launcher.services.api-gateway",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run start:development",
+    "start:development": "cross-env NODE_ENV=development node --preserve-symlinks ./src/app.js",
+    "start:production": "cross-env NODE_ENV=production node --preserve-symlinks ./src/app.js"
+  },
+  "author": "truongchauhien",
+  "license": "ISC",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.2.12",
+    "@grpc/proto-loader": "^0.5.6",
+    "convict": "^6.0.1",
+    "cookie-parser": "^1.4.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "terraria-launcher.commons": "file:../TerrariaLauncher.Commons",
+    "terraria-launcher.protos": "file:../TerrariaLauncher.Protos",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
+}

@@ -1,0 +1,18 @@
+{
+    "env": "development",
+    "port": "3000",
+    "gRpc": {
+        "services": {
+            "authentication": {
+                "host": "localhost",
+                "port": 3101
+            }
+        },
+        "tShockPlugins": {
+            "tShockManagement": {
+                "host": "localhost",
+                "port": 3200
+            }
+        }
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "env": "production",
+    "port": "3000",
+    "jwtSecret": "shhhhh",
+    "gRpc": {
+        "services": {
+            "authentication": {
+                "host": "localhost",
+                "port": 3101
+            }
+        },
+        "tShockPlugins": {
+            "tShockManagement": {
+                "host": "localhost",
+                "port": 3200
+            }
+        }
+    }
+}
