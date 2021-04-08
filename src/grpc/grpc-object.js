@@ -3,7 +3,8 @@ import gRpc from '@grpc/grpc-js';
 import protos from 'terraria-launcher.protos';
 
 const gRpcDefinitions = protoLoader.loadSync([
-    protos.services.authentication['authentication.proto'],    
+    protos.services.authentication['authentication.proto'],
+    protos.services.authentication['authorization.proto'],
     protos.tShockPlugins.tShockManagement['tshock_account_management.proto'],
     protos.tShockPlugins.tShockManagement['tshock_player_management.proto']
 ], {

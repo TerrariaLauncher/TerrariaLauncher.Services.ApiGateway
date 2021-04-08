@@ -1,13 +1,12 @@
-import jwt from 'jsonwebtoken';
 import HttpErrors from '../../http-errors/index.js';
-import configs from '../../../../configs/index.js';
 import gRpcClients from '../../../../grpc/grpc-clients.js';
 import gRpc from '@grpc/grpc-js';
 import util from 'util';
 
-const JWT_SECRET = configs.get('jwtSecret');
+const parseAccessToken = util.promisify(gRpcClients.services.authentication.authentication.parseAccessToken)
+    .bind(gRpcClients.services.authentication.authentication);
 
-export const accessTokenParser = async function (req, res, next) {
+export async function accessTokenParser(req, res, next) {
     const authenticationHeader = req.cookies['TerrariaLauncher.Authentication'];
     if (!authenticationHeader) {
         throw new HttpErrors.Unauthorized('Authentication is required.');
@@ -16,7 +15,7 @@ export const accessTokenParser = async function (req, res, next) {
     const [schema, token] = authenticationHeader.split(' ');
     if (schema !== 'Bearer') throw new HttpErrors.Unauthorized('Authentication schema is invalid.');
     try {
-        const decoded = await util.promisify(gRpcClients.services.authentication.parseAccessToken)({
+        const decoded = await parseAccessToken({
             accessToken: token
         });
         req.auth = decoded;

@@ -5,6 +5,19 @@ import util from 'util';
 import gRpc from '@grpc/grpc-js';
 import { GrpcError } from '../commons/grpc/index.js';
 
+const authenticationService = {
+    login: util.promisify(gRpcClients.services.authentication.authentication.login)
+        .bind(gRpcClients.services.authentication.authentication),
+    getUserByName: util.promisify(gRpcClients.services.authentication.authentication.getUserByName)
+        .bind(gRpcClients.services.authentication.authentication),
+    getUserByEmail: util.promisify(gRpcClients.services.authentication.authentication.getUserByEmail)
+        .bind(gRpcClients.services.authentication.authentication),
+    register: util.promisify(gRpcClients.services.authentication.authentication.register)
+        .bind(gRpcClients.services.authentication.authentication),
+    renewAccessToken: util.promisify(gRpcClients.services.authentication.authentication.renewAccessToken)
+        .bind(gRpcClients.services.authentication.authentication)
+};
+
 /**
  * 
  * @param {import('express').Request} req 
@@ -14,12 +27,11 @@ export async function login(req, res) {
     const { name, email, password } = req.body;
     let loginResponse = null;
     try {
-        loginResponse = await util.promisify(gRpcClients.services.authentication.login)
-            .call(gRpcClients.services.authentication, {
-                name,
-                email,
-                password
-            });
+        loginResponse = await authenticationService.login({
+            name,
+            email,
+            password
+        });
     } catch (error) {
         throw new GrpcError(error);
     }
@@ -46,8 +58,7 @@ export async function register(req, res) {
 
     let user = null;
     try {
-        user = await util.promisify(gRpcClients.services.authentication.getUserByName)
-            .call(gRpcClients.services.authentication, { name });
+        user = await authenticationService.getUserByName({ name });
     } catch (error) {
         if (error.code !== gRpc.status.NOT_FOUND) throw new GrpcError(error);
     }
@@ -55,8 +66,7 @@ export async function register(req, res) {
 
     if (email) {
         try {
-            user = await util.promisify(gRpcClients.services.authentication.GetUserByEmail)
-                .call(gRpcClients.services.authentication, { email });
+            user = await authenticationService.getUserByEmail({ email });
         } catch (error) {
             if (error.code !== gRpc.status.NOT_FOUND) throw new GrpcError(error);
         }
@@ -64,12 +74,11 @@ export async function register(req, res) {
     }
 
     try {
-        const registerResponse = await util.promisify(gRpcClients.services.authentication.register)
-            .call(gRpcClients.services.authentication, {
-                name,
-                password,
-                email
-            });
+        const registerResponse = await authenticationService.register({
+            name,
+            password,
+            email
+        });
 
         res.status(200).json({
             id: registerResponse.id,
@@ -91,11 +100,9 @@ export async function renewToken(req, res) {
     const refreshToken = req.cookies['TerrariaLauncher.RefreshToken'];
     let accessToken;
     try {
-        ({ accessToken } = await util.promisify(gRpcClients.services.authentication.renewAccessToken)
-            .call(gRpcClients.services.authentication, {
-                refreshToken: refreshToken
-            })
-        );
+        ({ accessToken } = await authenticationService.renewAccessToken({
+            refreshToken: refreshToken
+        }));
     } catch (error) {
         if (error.code === gRpc.status.INVALID_ARGUMENT) throw new HttpErrors.BadRequest('Refresh token is invalid');
         else throw new GrpcError(error);

@@ -4,10 +4,16 @@ import configs from '../configs/index.js';
 
 export default {
     services: {
-        authentication: new gRpcObject.terraria_launcher.protos.services.authentication.Authentication(
-            `${configs.get('gRpc.services.authentication.host')}:${configs.get('gRpc.services.authentication.port')}`,
-            gRpcLibrary.credentials.createInsecure()
-        )
+        authentication: {
+            authentication: new gRpcObject.terraria_launcher.protos.services.authentication.Authentication(
+                `${configs.get('gRpc.services.authentication.host')}:${configs.get('gRpc.services.authentication.port')}`,
+                gRpcLibrary.credentials.createInsecure()
+            ),
+            authorization: new gRpcObject.terraria_launcher.protos.services.authentication.Authorization(
+                `${configs.get('gRpc.services.authentication.host')}:${configs.get('gRpc.services.authentication.port')}`,
+                gRpcLibrary.credentials.createInsecure()
+            )
+        }
     },
     tShockPlugins: {
         tShockManagement: {

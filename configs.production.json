@@ -1,7 +1,6 @@
 {
     "env": "production",
     "port": "3000",
-    "jwtSecret": "shhhhh",
     "gRpc": {
         "services": {
             "authentication": {
