@@ -16,6 +16,9 @@ export const configs = convict({
     jwtSecret: {
         default: 'shhhhh'
     },
+    allowOrigins: {
+         default: []
+    },
     gRpc: {
         services: {
             authentication: {
@@ -25,15 +28,13 @@ export const configs = convict({
                 port: {
                     default: 3101
                 }
-            }
-        },
-        tShockPlugins: {
-            tShockManagement: {
+            },
+            tShockGateway: {
                 host: {
                     default: "localhost"
                 },
                 port: {
-                    default: 3200
+                    default: 3102
                 }
             }
         }

@@ -1,6 +1,6 @@
 import express from 'express';
 import asyncWrapper from '../commons/async-wrapper/index.js';
-import requiredPermission from '../commons/middlewares/required-permissions/index.js';
+import requiredPermission from '../commons/middlewares/required-permission/index.js';
 import * as authenticationController from './controller.js';
 
 const router = express.Router();

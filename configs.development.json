@@ -1,17 +1,16 @@
 {
     "env": "development",
     "port": "3000",
+    "allowOrigins": ["http://localhost:8080"],
     "gRpc": {
         "services": {
             "authentication": {
                 "host": "localhost",
                 "port": 3101
-            }
-        },
-        "tShockPlugins": {
-            "tShockManagement": {
+            },
+            "tShockGateway": {
                 "host": "localhost",
-                "port": 3200
+                "port": 3102
             }
         }
     }

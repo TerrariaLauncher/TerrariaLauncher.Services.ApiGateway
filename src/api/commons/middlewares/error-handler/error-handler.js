@@ -36,13 +36,23 @@ export const errorHandler = function (err, req, res, next) {
     }
     else if (err instanceof GrpcError) {
         switch (err.code || gRpc.status.UNKNOWN) {
+            case gRpc.status.INVALID_ARGUMENT:
+                res.status(400).json({
+                    error: err.details
+                });
+                break;
             case gRpc.status.ALREADY_EXISTS:
                 res.status(409).json({
                     error: err.details
                 });
                 break;
-            case gRpc.status.INVALID_ARGUMENT:
-                res.status(400).json({
+            case gRpc.status.NOT_FOUND:
+                res.status(404).json({
+                    error: err.details
+                });
+                break;
+            case gRpc.status.UNAVAILABLE:
+                res.status(503).json({
                     error: err.details
                 });
                 break;

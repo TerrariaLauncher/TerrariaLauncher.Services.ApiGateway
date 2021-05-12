@@ -1,4 +1,5 @@
 import gRpcClients from '../../../../grpc/grpc-clients.js';
+import protoMessages from '../../../../grpc/messages.js';
 import util from 'util';
 import HttpErrors from '../../http-errors/http-errors.js';
 
@@ -8,12 +9,13 @@ const doesGroupContainsPermission = util.promisify(gRpcClients.services.authenti
 export function requiredPermission(permission) {
     return async function (req, res, next) {
         const group = req.auth?.group ?? 'guest';
-        const { contains } = await doesGroupContainsPermission({
-            group,
-            permission
-        });
 
-        if (!contains) {
+        const requestMessage = new protoMessages.service.authentication.DoesGroupContainsPermissionRequest();
+        requestMessage.setGroup(group);
+        requestMessage.setPermission(permission);
+        const responseMessage = await doesGroupContainsPermission(requestMessage);
+
+        if (!responseMessage.getContains()) {
             throw new HttpErrors.Forbidden(`Required permission: '${permission}'.`);
         }
 
