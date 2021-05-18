@@ -4,10 +4,13 @@ import configs from '../configs/index.js';
 
 import { AuthenticationClient } from './generated-code/services/authentication/authentication_grpc_pb.cjs';
 import { AuthorizationClient } from './generated-code/services/authentication/authorization_grpc_pb.cjs';
-import { TShockInstanceManagementClient } from './generated-code/services/tshock_gateway/tshock_instance_management_grpc_pb.cjs';
-import { TShockPlayerManagementClient } from './generated-code/services/tshock_gateway/tshock_player_management_grpc_pb.cjs';
-import { TShockUserManagementClient } from './generated-code/services/tshock_gateway/tshock_user_management_grpc_pb.cjs';
-import { TShockGroupManagementClient } from './generated-code/services/tshock_gateway/tshock_group_management_grpc_pb.cjs';
+
+import { InstanceManagementClient } from './generated-code/services/instance_gateway/instance_management_grpc_pb.cjs';
+import { InstancePlayerManagementClient } from './generated-code/services/instance_gateway/instance_player_management_grpc_pb.cjs';
+import { InstanceUserManagementClient } from './generated-code/services/instance_gateway/instance_user_management_grpc_pb.cjs';
+import { InstanceGroupManagementClient } from './generated-code/services/instance_gateway/instance_group_management_grpc_pb.cjs';
+
+import { RegisteredInstanceUserServiceClient } from './generated-code/services/trading_system/registered_instance_user_service_grpc_pb.cjs'
 
 export default {
     services: {
@@ -21,21 +24,27 @@ export default {
                 gRpcLibrary.credentials.createInsecure()
             )
         },
-        tShockGateway: {
-            tShockInstanceManagement: new TShockInstanceManagementClient(
-                `${configs.get('gRpc.services.tShockGateway.host')}:${configs.get('gRpc.services.tShockGateway.port')}`,
+        instanceGateway: {
+            instanceManagement: new InstanceManagementClient(
+                `${configs.get('gRpc.services.instanceGateway.host')}:${configs.get('gRpc.services.instanceGateway.port')}`,
                 gRpcLibrary.credentials.createInsecure()
             ),
-            tShockPlayerManagement: new TShockPlayerManagementClient(
-                `${configs.get('gRpc.services.tShockGateway.host')}:${configs.get('gRpc.services.tShockGateway.port')}`,
+            instancePlayerManagement: new InstancePlayerManagementClient(
+                `${configs.get('gRpc.services.instanceGateway.host')}:${configs.get('gRpc.services.instanceGateway.port')}`,
                 gRpcLibrary.credentials.createInsecure()
             ),
-            tShockUserManagement: new TShockUserManagementClient(
-                `${configs.get('gRpc.services.tShockGateway.host')}:${configs.get('gRpc.services.tShockGateway.port')}`,
+            instanceUserManagement: new InstanceUserManagementClient(
+                `${configs.get('gRpc.services.instanceGateway.host')}:${configs.get('gRpc.services.instanceGateway.port')}`,
                 gRpcLibrary.credentials.createInsecure()
             ),
-            tShockGroupManagement: new TShockGroupManagementClient(
-                `${configs.get('gRpc.services.tShockGateway.host')}:${configs.get('gRpc.services.tShockGateway.port')}`,
+            instanceGroupManagement: new InstanceGroupManagementClient(
+                `${configs.get('gRpc.services.instanceGateway.host')}:${configs.get('gRpc.services.instanceGateway.port')}`,
+                gRpcLibrary.credentials.createInsecure()
+            )
+        },
+        tradingSystem: {
+            registeredInstanceUserService: new RegisteredInstanceUserServiceClient(
+                `${configs.get('gRpc.services.tradingSystem.host')}:${configs.get('gRpc.services.tradingSystem.port')}`,
                 gRpcLibrary.credentials.createInsecure()
             )
         }

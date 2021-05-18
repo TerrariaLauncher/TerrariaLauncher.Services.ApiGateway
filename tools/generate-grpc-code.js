@@ -19,10 +19,14 @@ const protocolBuffersAndService = childProcess.execSync(
     "node_modules/terraria-launcher.protos/services/authentication/authentication.proto " +
     "node_modules/terraria-launcher.protos/services/authentication/authorization.proto " +
 
-    "node_modules/terraria-launcher.protos/services/tshock_gateway/tshock_instance_management.proto " +
-    "node_modules/terraria-launcher.protos/services/tshock_gateway/tshock_player_management.proto " +
-    "node_modules/terraria-launcher.protos/services/tshock_gateway/tshock_user_management.proto " +
-    "node_modules/terraria-launcher.protos/services/tshock_gateway/tshock_group_management.proto", {
+    "node_modules/terraria-launcher.protos/services/instance_gateway/instance_management.proto " +
+    "node_modules/terraria-launcher.protos/services/instance_gateway/instance_player_management.proto " +
+    "node_modules/terraria-launcher.protos/services/instance_gateway/instance_user_management.proto " +
+    "node_modules/terraria-launcher.protos/services/instance_gateway/instance_group_management.proto " +
+    
+    "node_modules/terraria-launcher.protos/services/trading_system/registered_instance_user_service.proto " +
+    "node_modules/terraria-launcher.protos/services/trading_system/level_service.proto " +
+    "node_modules/terraria-launcher.protos/services/trading_system/shop_service.proto", {
     cwd: process.cwd(),
     encoding: 'utf8' // to return string instead of buffer.
 });
@@ -35,9 +39,9 @@ const protocolBuffersOnly = childProcess.execSync(
 
     "node_modules/terraria-launcher.protos/common_messages.proto " +
 
-    "node_modules/terraria-launcher.protos/tshock_plugins/tshock_management/tshock_player_management.proto " +
-    "node_modules/terraria-launcher.protos/tshock_plugins/tshock_management/tshock_user_management.proto " +
-    "node_modules/terraria-launcher.protos/tshock_plugins/tshock_management/tshock_group_management.proto", {
+    "node_modules/terraria-launcher.protos/instance_plugins/instance_management/instance_player_management.proto " +
+    "node_modules/terraria-launcher.protos/instance_plugins/instance_management/instance_user_management.proto " +
+    "node_modules/terraria-launcher.protos/instance_plugins/instance_management/instance_group_management.proto", {
     cwd: process.cwd(),
     encoding: 'utf8'
 });

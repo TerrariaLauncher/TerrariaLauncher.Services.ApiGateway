@@ -7,12 +7,14 @@ import accessTokenParser from './commons/middlewares/access-token-parser/index.j
 import errorHandler from './commons/middlewares/error-handler/index.js';
 
 import authenticationRouter from './authentication/routes.js';
-import serverRouter from './servers/routes.js';
+import instanceRouter from './instances/routes.js';
+import tradingRouter from './trading/routes.js';
 
 const rootRouter = express.Router();
 rootRouter.use('/authentication', authenticationRouter);
 // rootRouter.use(asyncWrapper(accessTokenParser));
-rootRouter.use('/servers', serverRouter);
+rootRouter.use('/instances', instanceRouter);
+rootRouter.use('/trading', tradingRouter);
 
 const api = express();
 api.use(cors({

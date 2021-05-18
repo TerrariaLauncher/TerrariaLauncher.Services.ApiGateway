@@ -29,12 +29,20 @@ export const configs = convict({
                     default: 3101
                 }
             },
-            tShockGateway: {
+            instanceGateway: {
                 host: {
                     default: "localhost"
                 },
                 port: {
                     default: 3102
+                }
+            },
+            tradingSystem: {
+                host: {
+                    default: "localhost"
+                },
+                port: {
+                    default: 3103
                 }
             }
         }

@@ -7,9 +7,9 @@ import HttpErrors from '../../commons/http-errors/index.js';
 import requiredPermissionWrapper from '../../commons/required-permission-wrapper/index.js';
 import { GrpcError } from '../../commons/grpc/index.js';
 
-const tShockPlayerManagement = {
-    getPlayers: util.promisify(grpcClients.services.tShockGateway.tShockPlayerManagement.getPlayers)
-        .bind(grpcClients.services.tShockGateway.tShockPlayerManagement)
+const instancePlayerManagement = {
+    getPlayers: util.promisify(grpcClients.services.instanceGateway.instancePlayerManagement.getPlayers)
+        .bind(grpcClients.services.instanceGateway.instancePlayerManagement)
 }
 
 /**
@@ -37,15 +37,15 @@ async function trackPlayerSession(req, res, next) {
     res.set('Cache-Control', 'no-cache');
     res.set('Content-Type', 'text/event-stream');
 
-    const { serverIndex } = req.params;
-    const trackPlayerSessionRequest = new pbMessages.service.tShockGateway.TrackPlayerSessionRequest();
-    const payload = new pbMessages.service.tShockGateway.TrackPlayerSessionRequest.Payload();
+    const { instanceId } = req.params;
+    const trackPlayerSessionRequest = new pbMessages.service.instanceGateway.TrackPlayerSessionRequest();
+    const payload = new pbMessages.service.instanceGateway.TrackPlayerSessionRequest.Payload();
     payload.setNeedInitialization(true);
-    trackPlayerSessionRequest.setInstance(serverIndex);
+    trackPlayerSessionRequest.setInstanceId(instanceId);
     trackPlayerSessionRequest.setPayload(payload);
-    const TrackPlayerSessionResponse = pbMessages.tShockPlugins.tShockManagement.TrackPlayerSessionResponse;
+    const TrackPlayerSessionResponse = pbMessages.instancePlugins.instanceManagement.TrackPlayerSessionResponse;
 
-    const call = grpcClients.services.tShockGateway.tShockPlayerManagement.trackPlayerSession(trackPlayerSessionRequest);
+    const call = grpcClients.services.instanceGateway.instancePlayerManagement.trackPlayerSession(trackPlayerSessionRequest);
     req.on('close', function () {
         call.cancel();
     });
@@ -103,14 +103,14 @@ async function trackPlayerSession(req, res, next) {
 }
 
 async function getAllPlayers(req, res) {
-    const { serverIndex } = req.params;
+    const { instanceId } = req.params;
 
-    const getPlayersRequest = new pbMessages.service.tShockGateway.GetPlayersRequest();
-    const payload = new pbMessages.tShockPlugins.tShockManagement.GetPlayersRequest();
-    getPlayersRequest.setInstance(serverIndex);
+    const getPlayersRequest = new pbMessages.service.instanceGateway.GetPlayersRequest();
+    const payload = new pbMessages.instancePlugins.instanceManagement.GetPlayersRequest();
+    getPlayersRequest.setInstanceId(instanceId);
     getPlayersRequest.setPayload(payload);
 
-    const getPlayersResponse = await tShockPlayerManagement.getPlayers(getPlayersRequest);
+    const getPlayersResponse = await instancePlayerManagement.getPlayers(getPlayersRequest);
     const players = [];
     for (const playerMessage of getPlayersResponse.getPlayersList()) {
         players.push({
@@ -163,16 +163,16 @@ async function trackPlayerData(req, res) {
     res.set('Cache-Control', 'no-cache');
     res.set('Content-Type', 'text/event-stream');
 
-    const { serverIndex, playerName } = req.params;
+    const { instanceId, playerName } = req.params;
 
-    const trackPlayerDataRequest = new pbMessages.service.tShockGateway.TrackPlayerDataRequest();
-    const trackPlayerDataRequest_Payload = new pbMessages.service.tShockGateway.TrackPlayerDataRequest.Payload();
+    const trackPlayerDataRequest = new pbMessages.service.instanceGateway.TrackPlayerDataRequest();
+    const trackPlayerDataRequest_Payload = new pbMessages.service.instanceGateway.TrackPlayerDataRequest.Payload();
     trackPlayerDataRequest_Payload.setPlayerName(playerName);
     trackPlayerDataRequest_Payload.setNeedInitialization(true);
-    trackPlayerDataRequest.setInstance(serverIndex);
+    trackPlayerDataRequest.setInstanceId(instanceId);
     trackPlayerDataRequest.setPayload(trackPlayerDataRequest_Payload);
 
-    const call = grpcClients.services.tShockGateway.tShockPlayerManagement.trackPlayerData(trackPlayerDataRequest);
+    const call = grpcClients.services.instanceGateway.instancePlayerManagement.trackPlayerData(trackPlayerDataRequest);
     req.on('close', function () {
         call.cancel();
     });
@@ -183,28 +183,28 @@ async function trackPlayerData(req, res) {
             const detailsMessage = trackPlayerDataResponse.getDetails();
             let details = null;
             switch (detailsMessage.getTypeName()) {
-                case 'terraria_launcher.protos.tshock_plugins.tshock_management.TrackPlayerDataResponse.SlotEventDetails':
+                case 'terraria_launcher.protos.instance_plugins.instance_management.TrackPlayerDataResponse.SlotEventDetails':
                     details = detailsMessage.unpack(
-                        pbMessages.tShockPlugins.tShockManagement.TrackPlayerDataResponse.SlotEventDetails.deserializeBinary,
-                        'terraria_launcher.protos.tshock_plugins.tshock_management.TrackPlayerDataResponse.SlotEventDetails');
+                        pbMessages.instancePlugins.instanceManagement.TrackPlayerDataResponse.SlotEventDetails.deserializeBinary,
+                        'terraria_launcher.protos.instance_plugins.instance_management.TrackPlayerDataResponse.SlotEventDetails');
                     res.write('event: slot\n');
                     break;
-                case 'terraria_launcher.protos.tshock_plugins.tshock_management.TrackPlayerDataResponse.HealthEventDetails':
+                case 'terraria_launcher.protos.instance_plugins.instance_management.TrackPlayerDataResponse.HealthEventDetails':
                     details = detailsMessage.unpack(
-                        pbMessages.tShockPlugins.tShockManagement.TrackPlayerDataResponse.HealthEventDetails.deserializeBinary,
-                        'terraria_launcher.protos.tshock_plugins.tshock_management.TrackPlayerDataResponse.HealthEventDetails');
+                        pbMessages.instancePlugins.instanceManagement.TrackPlayerDataResponse.HealthEventDetails.deserializeBinary,
+                        'terraria_launcher.protos.instance_plugins.instance_management.TrackPlayerDataResponse.HealthEventDetails');
                     res.write('event: health\n');
                     break;
-                case 'terraria_launcher.protos.tshock_plugins.tshock_management.TrackPlayerDataResponse.ManaEventDetails':
+                case 'terraria_launcher.protos.instance_plugins.instance_management.TrackPlayerDataResponse.ManaEventDetails':
                     details = detailsMessage.unpack(
-                        pbMessages.tShockPlugins.tShockManagement.TrackPlayerDataResponse.ManaEventDetails.deserializeBinary,
-                        'terraria_launcher.protos.tshock_plugins.tshock_management.TrackPlayerDataResponse.ManaEventDetails');
+                        pbMessages.instancePlugins.instanceManagement.TrackPlayerDataResponse.ManaEventDetails.deserializeBinary,
+                        'terraria_launcher.protos.instance_plugins.instance_management.TrackPlayerDataResponse.ManaEventDetails');
                     res.write('event: mana\n');
                     break;
-                case 'terraria_launcher.protos.tshock_plugins.tshock_management.TrackPlayerDataResponse.BuffEventDetails':
+                case 'terraria_launcher.protos.instance_plugins.instance_management.TrackPlayerDataResponse.BuffEventDetails':
                     details = detailsMessage.unpack(
-                        pbMessages.tShockPlugins.tShockManagement.TrackPlayerDataResponse.BuffEventDetails.deserializeBinary,
-                        'terraria_launcher.protos.tshock_plugins.tshock_management.TrackPlayerDataResponse.BuffEventDetails');
+                        pbMessages.instancePlugins.instanceManagement.TrackPlayerDataResponse.BuffEventDetails.deserializeBinary,
+                        'terraria_launcher.protos.instance_plugins.instance_management.TrackPlayerDataResponse.BuffEventDetails');
                     res.write('event: buff\n');
                     break;
                 default:
