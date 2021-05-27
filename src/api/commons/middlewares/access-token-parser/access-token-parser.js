@@ -20,9 +20,11 @@ export async function accessTokenParser(req, res, next) {
         parseAccessTokenRequest.setAccessToken(token);
         const parseAccessTokenResponse = await parseAccessToken(parseAccessTokenRequest);
         req.auth = {
-            id: parseAccessTokenResponse.getId(),
-            name: parseAccessTokenResponse.getName(),
-            group: parseAccessTokenResponse.getGroup()
+            user: {
+                id: parseAccessTokenResponse.getId(),
+                name: parseAccessTokenResponse.getName(),
+                group: parseAccessTokenResponse.getGroup()
+            }
         };
     } catch (err) {
         if (err.code === gRpc.status.INVALID_ARGUMENT) {

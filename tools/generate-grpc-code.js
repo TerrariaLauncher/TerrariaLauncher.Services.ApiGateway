@@ -11,37 +11,37 @@ if (fs.existsSync('src/grpc/generated-code')) {
 fs.mkdirSync('src/grpc/generated-code');
 
 const protocolBuffersAndService = childProcess.execSync(
-    "npx grpc_tools_node_protoc " +
-    "--proto_path=node_modules/terraria-launcher.protos " +
-    "--js_out=import_style=commonjs,binary:src/grpc/generated-code " +
-    "--grpc_out=grpc_js:src/grpc/generated-code " +
+    'npx grpc_tools_node_protoc ' +
+    '--proto_path=node_modules/terraria-launcher.protos ' +
+    '--js_out=import_style=commonjs,binary:src/grpc/generated-code ' +
+    '--grpc_out=grpc_js:src/grpc/generated-code ' +
 
-    "node_modules/terraria-launcher.protos/services/authentication/authentication.proto " +
-    "node_modules/terraria-launcher.protos/services/authentication/authorization.proto " +
+    'node_modules/terraria-launcher.protos/services/authentication/authentication.proto ' +
+    'node_modules/terraria-launcher.protos/services/authentication/authorization.proto ' +
 
-    "node_modules/terraria-launcher.protos/services/instance_gateway/instance_management.proto " +
-    "node_modules/terraria-launcher.protos/services/instance_gateway/instance_player_management.proto " +
-    "node_modules/terraria-launcher.protos/services/instance_gateway/instance_user_management.proto " +
-    "node_modules/terraria-launcher.protos/services/instance_gateway/instance_group_management.proto " +
+    'node_modules/terraria-launcher.protos/services/instance_gateway/instance_management.proto ' +
+    'node_modules/terraria-launcher.protos/services/instance_gateway/instance_player_management.proto ' +
+    'node_modules/terraria-launcher.protos/services/instance_gateway/instance_user_management.proto ' +
+    'node_modules/terraria-launcher.protos/services/instance_gateway/instance_group_management.proto ' +
     
-    "node_modules/terraria-launcher.protos/services/trading_system/registered_instance_user_service.proto " +
-    "node_modules/terraria-launcher.protos/services/trading_system/level_service.proto " +
-    "node_modules/terraria-launcher.protos/services/trading_system/shop_service.proto", {
+    'node_modules/terraria-launcher.protos/services/trading_system/registered_instance_user_service.proto ' +
+    'node_modules/terraria-launcher.protos/services/trading_system/level_service.proto ' +
+    'node_modules/terraria-launcher.protos/services/trading_system/shop_service.proto', {
     cwd: process.cwd(),
     encoding: 'utf8' // to return string instead of buffer.
 });
 console.info(protocolBuffersAndService);
 
 const protocolBuffersOnly = childProcess.execSync(
-    "npx grpc_tools_node_protoc " +
-    "--proto_path=node_modules/terraria-launcher.protos " +
-    "--js_out=import_style=commonjs,binary:src/grpc/generated-code " +
+    'npx grpc_tools_node_protoc ' +
+    '--proto_path=node_modules/terraria-launcher.protos ' +
+    '--js_out=import_style=commonjs,binary:src/grpc/generated-code ' +
 
-    "node_modules/terraria-launcher.protos/common_messages.proto " +
+    'node_modules/terraria-launcher.protos/common_messages.proto ' +
 
-    "node_modules/terraria-launcher.protos/instance_plugins/instance_management/instance_player_management.proto " +
-    "node_modules/terraria-launcher.protos/instance_plugins/instance_management/instance_user_management.proto " +
-    "node_modules/terraria-launcher.protos/instance_plugins/instance_management/instance_group_management.proto", {
+    'node_modules/terraria-launcher.protos/instance_plugins/instance_management/instance_player_management.proto ' +
+    'node_modules/terraria-launcher.protos/instance_plugins/instance_management/instance_user_management.proto ' +
+    'node_modules/terraria-launcher.protos/instance_plugins/instance_management/instance_group_management.proto', {
     cwd: process.cwd(),
     encoding: 'utf8'
 });

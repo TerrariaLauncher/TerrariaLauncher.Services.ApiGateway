@@ -16,6 +16,25 @@ const authenticationService = {
         .bind(gRpcClients.services.authentication.authentication)
 };
 
+const cookies = {
+    authentication: {
+        name: 'TerrariaLauncher.Authentication',
+        options: {
+            httpOnly: true,
+            path: '/api',
+            maxAge: (7 * 24 * 60 * 60) * 1000
+        }
+    },
+    refreshToken: {
+        name: 'TerrariaLauncher.RefreshToken',
+        options: {
+            httpOnly: true,
+            path: '/api/authentication/token',
+            maxAge: (7 * 24 * 60 * 60) * 1000
+        }
+    }
+}
+
 /**
  * 
  * @param {import('express').Request} req 
@@ -26,30 +45,24 @@ export async function login(req, res) {
     let loginResponse = null;
     try {
         const loginRequest = new pbMessages.service.authentication.LoginRequest();
-        loginRequest.setName(name);
-        loginRequest.setEmail(email);
+        if (email) loginRequest.setEmail(email);
+        if (name) loginRequest.setName(name);
         loginRequest.setPassword(password);
         loginResponse = await authenticationService.login(loginRequest);
     } catch (error) {
         throw new GrpcError(error);
     }
 
-    res.cookie('TerrariaLauncher.Authentication', `Bearer ${loginResponse.getAccessToken()}`, {
-        httpOnly: true,
-        maxAge: (7 * 24 * 60 * 60) * 1000
-    }).cookie('TerrariaLauncher.RefreshToken', loginResponse.getRefreshToken(), {
-        httpOnly: true,
-        path: '/api/authentication/token',
-        maxAge: (7 * 24 * 60 * 60) * 1000
-    });
-
-    res.status(200).json({
-        id: loginResponse.getId(),
-        name: loginResponse.getName(),
-        group: loginResponse.getGroup(),
-        accessToken: loginResponse.getAccessToken(),
-        refreshToken: loginResponse.getRefreshToken()
-    });
+    res
+        .cookie(cookies.authentication.name, `Bearer ${loginResponse.getAccessToken()}`, cookies.authentication.options)
+        .cookie(cookies.refreshToken.name, loginResponse.getRefreshToken(), cookies.refreshToken.options)
+        .json({
+            id: loginResponse.getId(),
+            name: loginResponse.getName(),
+            group: loginResponse.getGroup(),
+            accessToken: loginResponse.getAccessToken(),
+            refreshToken: loginResponse.getRefreshToken()
+        });
 }
 
 /**
@@ -74,6 +87,7 @@ export async function register(req, res) {
     } catch (error) {
         if (error.code !== gRpc.status.NOT_FOUND) throw new GrpcError(error);
     }
+
     if (getUserResponse) throw new HttpErrors.Conflict('User name is existed.');
 
     try {
@@ -89,7 +103,7 @@ export async function register(req, res) {
             group: registerResponse.getGroup(),
             email: registerResponse.getEmail()
         });
-    } catch (exception) {
+    } catch (error) {
         throw new GrpcError(error);
     }
 }
@@ -103,27 +117,45 @@ export async function renewToken(req, res) {
     const refreshToken = req.cookies['TerrariaLauncher.RefreshToken'];
     if (!refreshToken) throw new HttpErrors.BadRequest('Refresh token is invalid');
 
+    let id;
+    let name;
+    let group;
     let accessToken;
     try {
         const renewAccessTokenRequest = new pbMessages.service.authentication.RenewAccessTokenTokenRequest();
         renewAccessTokenRequest.setRefreshToken(refreshToken);
         const renewAccessTokenResponse = await authenticationService.renewAccessToken(renewAccessTokenRequest)
         accessToken = renewAccessTokenResponse.getAccessToken();
+        id = renewAccessTokenResponse.getId();
+        name = renewAccessTokenResponse.getName();
+        group = renewAccessTokenResponse.getGroup()
     } catch (error) {
         if (error.code === gRpc.status.INVALID_ARGUMENT) throw new HttpErrors.BadRequest('Refresh token is invalid');
         else throw new GrpcError(error);
     }
 
-    res.cookie('TerrariaLauncher.Authentication', `Bearer ${accessToken}`, {
-        httpOnly: true,
-        maxAge: (7 * 24 * 60 * 60) * 1000
-    }).cookie('TerrariaLauncher.RefreshToken', refreshToken, {
-        httpOnly: true,
-        path: '/api/authentication/token',
-        maxAge: (7 * 24 * 60 * 60) * 1000
-    });
+    res
+        .cookie(cookies.authentication.name, `Bearer ${accessToken}`, cookies.authentication.options)
+        .cookie(cookies.refreshToken.name, refreshToken, cookies.refreshToken.options)
+        .json({
+            id,
+            name,
+            group,
+            accessToken
+        });
+}
 
-    res.status(200).json({
-        accessToken
+/**
+ * 
+ * @param {import('express').Request} req 
+ * @param {import('express').Response} res 
+ */
+export function logout(req, res) {
+    res.clearCookie(cookies.authentication.name, Object.assign({}, cookies.authentication.options, {
+        maxAge: 0
+    })).clearCookie(cookies.refreshToken.name, Object.assign({}, cookies.refreshToken.options, {
+        maxAge: 0
+    })).json({
+        message: 'See you again!'
     });
 }

@@ -1,10 +1,7 @@
-import grpc from '@grpc/grpc-js';
 import grpcClients from '../../../grpc/grpc-clients.js';
 import pbMessages from '../../../grpc/messages.js';
 import util from 'util';
-import asyncWrapper from '../../commons/async-wrapper/async-wrapper.js';
 import HttpErrors from '../../commons/http-errors/index.js';
-import requiredPermissionWrapper from '../../commons/required-permission-wrapper/index.js';
 import { GrpcError } from '../../commons/grpc/index.js';
 
 const instancePlayerManagement = {
@@ -17,23 +14,7 @@ const instancePlayerManagement = {
  * @param {import('express').Request} req 
  * @param {import('express').Response} res 
  */
-export async function getPlayers(req, res, next) {
-    const { level } = req.query;
-    switch (level) {
-        case 'real-time':
-            await requiredPermissionWrapper('*')(trackPlayerSession)(req, res, next);
-            break;
-        default:
-            await requiredPermissionWrapper('*')(getAllPlayers)(req, res, next);
-    }
-}
-
-/**
- * 
- * @param {import('express').Request} req 
- * @param {import('express').Response} res 
- */
-async function trackPlayerSession(req, res, next) {
+export async function trackPlayerSession(req, res, next) {
     res.set('Cache-Control', 'no-cache');
     res.set('Content-Type', 'text/event-stream');
 
@@ -102,7 +83,7 @@ async function trackPlayerSession(req, res, next) {
     res.end();
 }
 
-async function getAllPlayers(req, res) {
+export async function getAllPlayers(req, res) {
     const { instanceId } = req.params;
 
     const getPlayersRequest = new pbMessages.service.instanceGateway.GetPlayersRequest();
@@ -131,35 +112,15 @@ async function getAllPlayers(req, res) {
     });
 }
 
-/**
- * 
- * @param {import('express').Request} req 
- * @param {import('express').Response} res 
- */
 export async function getPlayer(req, res) {
-    const { level } = req.query;
-    switch (level) {
-        case 'real-time':
-            await requiredPermissionWrapper('*')(trackPlayerData)(req, res);
-            break;
-        case 'verbose':
-            await requiredPermissionWrapper('*')(getPlayerData)(req, res);
-            break;
-        default:
-            await requiredPermissionWrapper('*')(getPlayerInfo)(req, res);
-            break;
-    }
-}
-
-async function getPlayerInfo(req, res) {
     throw new HttpErrors.MethodNotAllowed();
 }
 
-async function getPlayerData(req, res) {
+export async function getPlayerData(req, res) {
     throw new HttpErrors.MethodNotAllowed();
 }
 
-async function trackPlayerData(req, res) {
+export async function trackPlayerData(req, res) {
     res.set('Cache-Control', 'no-cache');
     res.set('Content-Type', 'text/event-stream');
 
